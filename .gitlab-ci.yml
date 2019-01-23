@@ -1,0 +1,36 @@
+image: "ruby:2.5.3"
+
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: backend_production
+
+cache:
+  paths:
+    - vendor/ruby
+
+stages:
+  - build
+  - deploy
+
+build_code:
+  variables:
+    DATABASE_URL: "postgresql://postgres@postgres:5421/$POSTGRES_DB"
+  stage: build
+  script:
+    - apt-get update && apt install -y -qq nodejs cmake  
+    - gem install bundler
+    - gem install execjs pronto pronto-rubocop pronto-flay
+    - PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_SECRET_KEY pronto run -f gitlab -c master
+    - RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
+  except:
+    - master
+
+deploy_production:
+  stage: deploy
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=binar-backend-b-10 --api-key=f7e06fb8-ced3-4d47-8a67-6d6f232d26c6
+  only:
+    - master

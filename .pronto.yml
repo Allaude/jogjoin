@@ -1,0 +1,3 @@
+gitlab:
+  slug: 9545559 # gitlab's project ID
+  api_endpoint: https://gitlab.com/api/v4
