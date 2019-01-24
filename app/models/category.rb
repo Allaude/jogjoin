@@ -11,7 +11,6 @@ class Category < ApplicationRecord
 # => Params validation. :name, :banner
 
   validates_presence_of   :name,    allow_nil: false, allow_blank: false
-  validates_presence_of   :banner,  allow_nil: true,  allow_blank: false
   validates_uniqueness_of :name
 
 end
